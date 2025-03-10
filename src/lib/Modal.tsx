@@ -10,7 +10,6 @@ type ModalProps = {
     filename: string;
     createdAt: string;
     summary: string;
-    details: string; // Adicione mais campos conforme necessário
   } | null;
 };
 
@@ -61,7 +60,7 @@ const Modal = ({ isOpen, onClose, onDeleteSuccess, document }: ModalProps) => {
       doc.text(
         `${message.sender === "user" ? "Eu" : "IA"}: ${message.text}`,
         10,
-        yPosition
+        yPosition,
       );
       yPosition += 10; // Ajusta a posição para a próxima mensagem
     });
@@ -106,7 +105,7 @@ const Modal = ({ isOpen, onClose, onDeleteSuccess, document }: ModalProps) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ question }),
-        }
+        },
       );
 
       if (!response.ok) {

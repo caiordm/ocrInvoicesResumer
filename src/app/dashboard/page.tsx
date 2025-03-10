@@ -5,55 +5,65 @@ import DocumentCard from "@/lib/DocumentCard";
 import Modal from "@/lib/Modal";
 import UploadModal from "@/lib/UploadModal";
 
+type CustomUser = {
+  id: string;
+  name: string;
+  email: string;
+  image?: string;
+};
+
+type Document = {
+  id: string;
+  filename: string;
+  createdAt: string;
+  summary: string;
+};
+
 export default function Dashboard() {
   const { data: session, status } = useSession();
-  const [documents, setDocuments] = useState([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(
+    null,
+  );
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
 
+  const user = session?.user as CustomUser | undefined;
+
   const fetchDocuments = async () => {
-    const res = await fetch(`http://localhost:3001/documents/user/${session.user.id}`);
-    const data = await res.json();
-    setDocuments(data);
+    if (!user?.id) return; // Evita erro caso `user` não tenha `id`
+    try {
+      const res = await fetch(
+        `http://localhost:3001/documents/user/${user.id}`,
+      );
+      const data: Document[] = await res.json();
+      setDocuments(data);
+    } catch (error) {
+      console.error("Erro ao buscar documentos:", error);
+    }
   };
 
   useEffect(() => {
-    if (session?.user?.id) {
-      fetchDocuments()
+    if (user?.id) {
+      fetchDocuments();
     }
-  }, [session]);
+  }, [user]);
 
   const handleDeleteSuccess = () => {
-    fetchDocuments(); // Atualiza a lista após a exclusão
+    fetchDocuments();
   };
 
   if (status === "loading") return <p>Carregando...</p>;
 
-  const handleCardClick = (document) => {
+  const handleCardClick = (document: Document) => {
     setSelectedDocument(document);
     setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedDocument(null);
-  };
-
-  const handleUploadSuccess = () => {
-    // Atualiza a lista de documentos após o upload
-    if (session?.user?.id) {
-      fetch(`http://localhost:3001/documents/user/${session.user.id}`)
-        .then((res) => res.json())
-        .then((data) => setDocuments(data))
-        .catch((err) => console.error("Erro ao buscar documentos:", err));
-    }
   };
 
   return (
     <div>
       <header className="w-full h-20 border-b-2 border-gray-200 flex px-8 py-1 justify-between items-center">
-        <h1 className="text-2xl">Olá, {session.user.name}</h1>
+        <h1 className="text-2xl">Olá, {session?.user?.name ?? "Usuário"}</h1>
         <button
           onClick={() => signOut()}
           className="py-2 px-8 text-lg flex items-center border-none text-white rounded-lg bg-red-800 cursor-pointer"
@@ -76,6 +86,7 @@ export default function Dashboard() {
             documents.map((doc) => (
               <DocumentCard
                 key={doc.id}
+                id={doc.id} // 🔹 Adicionando o id corretamente
                 name={doc.filename}
                 createdAt={doc.createdAt}
                 summary={doc.summary}
@@ -96,10 +107,10 @@ export default function Dashboard() {
       />
 
       <UploadModal
-        userId={session?.user.id}
+        userId={user?.id ?? ""}
         isOpen={isUploadModalOpen}
         onClose={() => setUploadModalOpen(false)}
-        onUploadSuccess={handleUploadSuccess}
+        onUploadSuccess={fetchDocuments}
       />
     </div>
   );
