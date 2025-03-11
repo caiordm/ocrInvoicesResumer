@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import { Metadata } from "next";
+import "./globals.css";
 import { AuthProvider } from "../../providers/auth-provider";
 
 const geistSans = Geist({
@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "The OCR App",
-  description: "a OCR App"
-}
+  description: "a OCR App",
+};
 
 export default function RootLayout({
   children,
@@ -25,11 +25,13 @@ export default function RootLayout({
 }>) {
   return (
     <AuthProvider>
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-      </body>
-    </html>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          {children}
+        </body>
+      </html>
     </AuthProvider>
   );
 }
