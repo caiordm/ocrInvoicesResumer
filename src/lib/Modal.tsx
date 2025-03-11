@@ -71,7 +71,7 @@ const Modal = ({ isOpen, onClose, onDeleteSuccess, document }: ModalProps) => {
 
   const deleteImage = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/documents/${id}`, {
+      const response = await fetch(`https://api-still-bird-2623.fly.dev/documents/${id}`, {
         method: "DELETE",
       });
 
@@ -98,7 +98,7 @@ const Modal = ({ isOpen, onClose, onDeleteSuccess, document }: ModalProps) => {
 
     try {
       const response = await fetch(
-        `http://localhost:3001/documents/${document.id}/question`,
+        `https://api-still-bird-2623.fly.dev/documents/${document.id}/question`,
         {
           method: "POST",
           headers: {

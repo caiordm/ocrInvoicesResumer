@@ -36,7 +36,7 @@ const UploadModal = ({ userId, isOpen, onClose, onUploadSuccess }: UploadModalPr
     formData.append("userId", userId);
 
     try {
-      const response = await fetch("http://localhost:3001/documents/upload", {
+      const response = await fetch("https://api-still-bird-2623.fly.dev/documents/upload", {
         method: "POST",
         body: formData,
       });

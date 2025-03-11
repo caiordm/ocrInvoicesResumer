@@ -34,7 +34,7 @@ export default function Dashboard() {
     if (!user?.id) return; // Evita erro caso `user` não tenha `id`
     try {
       const res = await fetch(
-        `http://localhost:3001/documents/user/${user.id}`,
+        `https://api-still-bird-2623.fly.dev/documents/user/${user.id}`,
       );
       const data: Document[] = await res.json();
       setDocuments(data);
